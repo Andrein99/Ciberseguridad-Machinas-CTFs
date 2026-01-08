@@ -1,10 +1,12 @@
-# 🔐 HackTheBox Writeups
+# 🔐 Writeups para máquinas en ciberseguridad
 
 Repositorio personal con writeups y soluciones de máquinas resueltas en plataformas de hacking ético como HackTheBox, TryHackMe y otras plataformas similares.
 
 ## 📋 Sobre este repositorio
 
 Este repositorio contiene documentación detallada de las máquinas que he resuelto, incluyendo el proceso de enumeración, explotación y escalada de privilegios. El objetivo es mantener un registro de aprendizaje y compartir conocimientos con la comunidad.
+
+**ℹ️¡Los writeups fueron realizados utilizando [Obsidian](https://obsidian.md/) con plugins como Style Settings, Code Styler, por lo que, para una mejor representación del contenido se incentiva a importar los documentos en Markdown a Obsidian con los plugins de la comunidad mencionados.!**
 
 ## ⚠️ Advertencia Legal
 
