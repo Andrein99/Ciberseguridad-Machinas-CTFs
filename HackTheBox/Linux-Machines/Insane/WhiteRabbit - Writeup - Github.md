@@ -76,10 +76,11 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 ```
 
 
-![[HTB-WhiteRabbit-MainPage.png]]
+![MainPage](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/Linux-Machines/Insane/Archivos%20adjuntos/WhiteRabbit/HTB-WhiteRabbit-MainPage.png)
 
 Podemos ver las tecnologías que están usando en la página web en la sección de `Services`. 
-![[HTB-WhiteRabbit-Services.png]]
+
+![Services](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/Linux-Machines/Insane/Archivos%20adjuntos/WhiteRabbit/HTB-WhiteRabbit-Services.png)
 
 Esto nos hace pensar que hay diferentes subdominios de la página corriendo estos servicios. Podemos utilizar `ffuf` para hacer fuzzing y encontrarlos con el siguiente comando.
 
@@ -101,7 +102,7 @@ Así obtenemos un subdominio de la página, y lo agregamos al archivo hosts.
 
 Al visitar la página tenemos la siguiente aplicación `Uptime Kuma`:
 
-![[HTB-WhiteRabbit-UptimeKuma.png]]
+![UptimeKuma](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/Linux-Machines/Insane/Archivos%20adjuntos/WhiteRabbit/HTB-WhiteRabbit-UptimeKuma.png)
 
 Haciendo una búsqueda rápida en Google acerca de los paths por defecto que puede tener la aplicación, encontramos `status`. Podemos hacer fuzzing a este path para intentar encontrar algo de utilidad.
 
@@ -113,11 +114,11 @@ temp
 
 Encontramos una sección de la página en `status.whiterabbit.htb/status/temp` que tiene la siguiente apariencia:
 
-![[HTB-WhiteRabbit-temp.png]]
+![temp-tap](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/Linux-Machines/Insane/Archivos%20adjuntos/WhiteRabbit/HTB-WhiteRabbit-temp.png)
 
 Acá se pueden ver diversos subdominios, que debemos añadir a `/etc/hosts`. Al entrar al subdominio `a668910b5514e.whiterabbit.htb` se puede encontrar una sección donde hablan de un flujo de automatización realizado con `n8n`, y se proporciona la estructura de una POST request que hace la aplicación `GoPhish` al flujo de `n8n` para que, con un Webhook, se inicie el flujo de automatización. 
 
-![[HTB-WhiteRabbit-Flujon8n.png]]
+![HTB-WhiteRabbit-Flujon8n.png](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/Linux-Machines/Insane/Archivos%20adjuntos/WhiteRabbit/HTB-WhiteRabbit-Flujon8n.png)
 
 ``` title:"POST Request" normal:1-3 warning:10-14
 POST /webhook/d96af3a4-21bd-4bcb-bd34-37bfc67dfd1d HTTP/1.1
@@ -162,7 +163,7 @@ También podemos encontrar en el archivo algunas queries vulnerables a SQL Injec
 
 En [Cyberchef](https://gchq.github.io/CyberChef/#recipe=JSON_Minify()HMAC(%7B'option':'UTF8','string':'3CWVGMndgMvdVAzOjqBiTicmv7gxc6IS'%7D,'SHA256')&input=ew0KICAiY2FtcGFpZ25faWQiOiAxLA0KICAiZW1haWwiOiAidGVzdEBleC5jb20iLA0KICAibWVzc2FnZSI6ICJDbGlja2VkIExpbmsiDQp9&ieol=CRLF) podemos hacer el tampering con la información que tenemos. Con esa receta se puede obtener la misma signature que tenía el body encontrado, por lo que sabemos que con este procedimiento podemos generar payloads válidos.
 
-![[HTB-WhiteRabbit-CyberChef.png]]
+![HTB-WhiteRabbit-CyberChef.png](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/Linux-Machines/Insane/Archivos%20adjuntos/WhiteRabbit/HTB-WhiteRabbit-CyberChef.png)
 
 # Explotación de vulnerabilidades
 
@@ -701,7 +702,9 @@ undefined8 main(void)
 ```
 
 El código parce hacer un cálculo de la contraseña usando la fecha actual con una precisión de microsegundos usando un conjuntos de caracteres comprendido por [a-zA-Z0-9].  También podemos notar el cálculo que se usa para calcular el milisegundo y dar la semilla para los valores aleatorios.
+
 $$milisegundos = segundos * \frac{1000milisegundos}{1segundo} + microsegundos*\frac{1milisegundo}{1000microsegundos}$$
+
 Como conocemos los segundos de la fecha `2024-08-30 14:40:42`del comando usado podemos reemplazarlo fácilmente en la ecuación, sin embargo, los microsegundos no los tenemos, por lo que escribimos un script en C con las mismas funciones para generar una contraseña por cada microsegundo que transcurrió. Al final, hacemos fuerza bruta con cada una de estas contraseñas para encontrar la que se generó con el comando en el historial de comandos encontrado.
 
 ```c title:neo-password-generator-cracked.c warning:23 normal:24
@@ -809,4 +812,3 @@ Last login: Fri Dec 19 16:07:05 2025 from 10.10.16.71
 
 neo@whiterabbit:~$
 ```
-
